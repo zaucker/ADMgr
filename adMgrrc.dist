@@ -9,7 +9,7 @@
 # - Standard group names in AD seem to be language dependent.
 #
 # - There are groups in Users and Builtin (at least the latter NOT
-#    being language dependent)
+#   being language dependent)
 #
 # - The userPasswd file must contain the user's cleartext password in
     the first line and must be readable for the user running adMgr.pl.
@@ -17,7 +17,7 @@
 {
  "adDomain":"my.addomain",                        # Your AD domain
  "adServer":"server.my.domain:636",               # Fully qualified hostname; ADMgr uses LDAPS
- "adUser":"Administrator",                        # You might have to prefix with AD domain
+ "adUser":"DOMAIN\\Administrator",                # You might have to prefix with AD domain
  "adPassword":null,                               # Login password for adUser on adServer
  "addToGroup":"Remotedesktopbenutzer,cn=builtin", # Users are added to this group automatically 
  "userPasswd":".rdpasswd",                        # Sets password if file in user's home is readable
