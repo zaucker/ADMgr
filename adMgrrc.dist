@@ -1,0 +1,24 @@
+# Relaxed parsing is enabled allowing for comments and trailing commas
+# in this JSON file.
+#
+# - Make sure your file permissions are save if adding your AD password
+#   here (not recommended).
+#
+# - AD domain and server domain (DNS) can be different.
+#
+# - Standard group names in AD seem to be language dependent.
+#
+# - There are groups in Users and Builtin (at least the latter NOT
+#    being language dependent)
+#
+# - The userPasswd file must contain the user's cleartext password in the first line
+#
+{
+ "adDomain":"my.addomain",                        # Your AD domain
+ "adServer":"server.my.domain:636",               # Fully qualified hostname; ADMgr uses LDAPS
+ "adUser":"Administrator",                        # You might have to prefix with AD domain
+ "adPassword":null,                               # Login password for adUser on adServer
+ "addToGroup":"Remotedesktopbenutzer,cn=builtin", # 
+ "userPasswd":".rdpasswd",
+ "shell":"/bin/bash",
+}
