@@ -1,4 +1,15 @@
-- Move adMgr.pl somewhere in your $PATH
+* Install required Perl modules if necessary:
+  
+  - Encode
+  - English
+  - Getopt::Long
+  - JSON
+  - Net::LDAPS
+  - Net::LDAP::Util
+  
+  Adapt use lib setting at the beginning of adMgr.pl if necessary.
 
-- Edit adMgrrc.dist according to your local setup and move to
+* Move adMgr.pl somewhere in your $PATH
+
+* Edit adMgrrc.dist according to your local setup and move to
   $HOME/.adMgrrc
