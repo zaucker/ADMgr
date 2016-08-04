@@ -196,7 +196,7 @@ Show usage message.
 sub usage {
     die << "USAGE";
   Usage: $PROGRAM_NAME: --adServer=hostname[:port] --adUser=adminUser --adPassword=password --adDomain=adDomain [params] action name
-         action: createUser|deleteUser|showUser|updateUser|showGroup|syncPasswd
+         action: help|createUser|deleteUser|showUser|updateUser|showGroup|syncPasswd
          params: for actions createUser (mandatory) and updateUser (optional)
                    --firstname
                    --lastname
