@@ -1,0 +1,8 @@
+ADMgr - Active Directory Manager
+
+Perl script using Net::LDAP to manage Active Directory users and groups
+
+Copyright (c) 2016- Oetiker+Partner AG and the people listed in the
+AUTHORS file.
+
+All rights reserved.

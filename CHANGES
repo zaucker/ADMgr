@@ -1,0 +1,74 @@
+2016-07-04 fz v1.0.0
+  - Cleanup
+  - Some template corrections
+
+2016-06-30 fz v0.9.9
+  - Cleanup
+  - Small fixes
+
+2016-06-20 fz v0.9.8
+  - Stair signs smaller for many events
+  - Smaller fonts for landscape stairs
+  - Create PS before printing
+  - Deal with invalid UTF-8
+
+2016-06-17 fz v0.9.7
+  - Cleanup Print.pm
+  - Multiple prints of signs
+  - German GUI elements
+
+2016-06-16 fz v0.9.6
+  - More modular seminar templates
+  - Cleanup test data
+  - Direct printing
+
+2016-06-06 fz v0.9.5
+  - template adjustments
+  - keep input layout in menu desciptions
+
+2016-06-06 fz v0.9.4
+  - Vertically align M1+M2 restaurant menu
+  - cleanup templates
+
+-2016-06-03 fz v0.9.3
+-  - More compact seminar menu
+
+2016-06-03 fz v0.9.2
+  - Prevent double entries on menu
+  - Add date/format german to menu table
+  
+2016-06-01 fz v0.9.1
+  - Add upload
+  - Implement printing menus
+  - Better error handling
+  - Fixed layout on seminar menus
+
+2016-06-01 fz v0.9.0
+  - Add menu preview
+
+2016-04-27 fz v0.8.7
+  - Table alignment for downArrows
+  - Handle multiple main rooms
+
+2016-04-15 fz v0.8.6
+  - Compacter templates
+
+2016-04-12 fz v0.8.4
+  - Blockable rooms
+  - Compacter templates
+
+2016-04-08 fz v0.8.3
+  - Config for lualatex
+  - Use Mojo::UserAgent after Protel interface fix
+
+2016-04-04 fz v0.8.2
+  - Pfeile angepasst
+  - Layouts angepasst
+  - Sortierung nach Veranstalter.Topic
+
+2016-03-31 fz v0.8.1
+  - Pfeile angepasst
+  - Alle Räume
+
+2016-03-30 fz v0.8.0
+  - Signage almost done

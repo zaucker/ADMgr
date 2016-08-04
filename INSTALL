@@ -1,0 +1,4 @@
+- Move adMgr.pl somewhere in your $PATH
+
+- Edit adMgrrc.dist according to your local setup and move to
+  $HOME/.adMgrrc
