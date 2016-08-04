@@ -3,7 +3,7 @@ Active Directory Manager - Perl script using Net::LDAPS to manage Active Directo
 
 Usage:
 ```
-./adMgr.pl: --adServer=hostname[:port] --adUser=adminUser --adPassword=password --adDomain=adDomain [params] action name
+./adMgr.pl: --adServer=host[:port] --adUser=user --adPassword=password --adDomain=domain [params] action name
 
 adPassword will be prompted for if not given on commandline or defaults file.
 

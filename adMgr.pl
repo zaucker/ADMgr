@@ -205,7 +205,7 @@ Show usage message.
 
 sub usage {
     die << "USAGE";
-  Usage: $PROGRAM_NAME: --adServer=hostname[:port] --adUser=adminUser [--adPassword=password] --adDomain=adDomain [params] action name
+  Usage: $PROGRAM_NAME: --adServer=host[:port] --adUser=user [--adPassword=password] --adDomain=domain [params] action name
 
          adPassword will be prompted for if not given on commandline or defaults file.
 
