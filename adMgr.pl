@@ -2,34 +2,58 @@
 
 use strict;
 use warnings;
-use v5.10; # we use features say and state
+use v5.10;    # enables features say and state
 
+# Adapt to your local setup
+# Script needs modules Net::LDAPS and Net::LDAP::Util
 use lib "$ENV{HOME}/lib/perl-5.18.2";
 
 use English qw( -no_match_vars );
 use Getopt::Long;
 use JSON;
 
+=head1 NAME
 
-#say encode_json \%defaults;
+adMgr.pl - the application class
 
-### ELKB tests
-#
-# ldapsearch -x -h eva.lkst.local -D "LKST\\Administrator" -W -b "cn=users,dc=lkst,dc=win" -s sub "(cn=*)" cn mail sn
-# ldapsearch -x -LLL -E pr=200/noprompt -h eva.lkst.local -D "LKST\\Administrator" -W -b "cn=schema,cn=configuration,dc=lkst,dc=win" -s base
+=head1 SYNOPSIS
 
-### ELKB local examples:
-# ./adMgr.pl --adServer=eva.lkst.local:63636 --adUser=Administrator --adPassword=XXX --adDomain=lkst.win showUser zaucker
+Manage Active Directory users and groups.
 
-### ELKB from O+P (ssh tunnel) examples:
-#
-# adMgr.pl --adServer=localhost:63636 --adUser=Administrator --adPassword=XXX --adDomain=lkst.win syncPasswd adamPasswd --minUid=1000 --maxUid=1000 --userPasswd=rdpasswd
-# ./adMgr.pl --adServer=localhost:63636 --adUser=Administrator --adPassword=XXX --adDomain=lkst.win showUser zaucker
+=head1 DESCRIPTION
 
+Create, delete, update, show Active Directory user accounts.
 
-sub usage; # defined below
+Show members of Active Directory groups.
 
-my $defaults;
+Sync with Unix /etc/passwd file
+
+=cut
+
+=head1 SCRIPT
+
+=head2 Global Variables
+
+=cut
+
+my $defaults; #used in main() and usage()
+
+=head2 Subroutine forward declarations
+
+The subroutines are defined below.
+
+=cut
+
+sub main;
+sub usage;
+
+=head2 Subroutines
+
+=head3 main()
+
+Called on startup.
+
+=cut
 
 sub main {
 
@@ -163,6 +187,12 @@ sub main {
     exit;
 }
 
+=head3 usage()
+
+Show usage message.
+
+=cut
+
 sub usage {
     die << "USAGE";
   Usage: $PROGRAM_NAME: --adServer=hostname[:port] --adUser=adminUser --adPassword=password --adDomain=adDomain [params] action name
@@ -201,12 +231,27 @@ USAGE
 main();
 exit 0;
 
+=head1 PACKAGE AdMgr
+
+=cut
 
 package AdMgr;
 
 use Encode qw(encode);
 use Net::LDAPS;
 use Net::LDAP::Util qw(ldap_error_text ldap_error_name ldap_error_desc);
+
+=head2 Public Methods
+
+=head3 new
+
+AdMgr->new(($class, $server, $domain, $aduser, $adPassword, $verbose, $options)
+
+$server string and $options hash passed to Net::LDAPS->new()
+
+$domain, $aduser, $addPassword for binding to the AD server.
+
+=cut
 
 sub new {
     my $class  = shift;
@@ -244,15 +289,31 @@ sub new {
     return $self;
 }
 
-### accessors
+=head3 ldap
+
+Accessor to Net::LDAPS object.
+
+=cut
 
 sub ldap {
     return shift->{ldap};
 }
 
+=head3 domain
+
+Accessor to AD domain
+
+=cut
+
 sub domain {
     return shift->{domain};
 }
+
+=head3 verbose
+
+Print verbose output if true.
+
+=cut
 
 sub verbose {
     return shift->{verbose};
@@ -260,16 +321,19 @@ sub verbose {
 
 ### public methods
 
-# ldapsearch -x -h eva.lkst.win -D lkst\\Administrator -W -b "cn=users,dc=lkst,dc=win" -s sub "(cn=*)" cn mail sn
-sub getUsers {
-    my $self = shift;
+=head3 getUsers($username, $attributes)
 
-    my $ldap = $self->ldap;
-    my $username = shift;
+Return array ref of users. Filter for $username (if set) and return AD $attributes (array ref).
+
+=cut
+
+sub getUsers {
+    my $self       = shift;
+    my $username   = shift;
     my $attributes = shift // [];
     # $attributes = [ qw(cn uidNumber gidNumber homeDirectory loginShell sn) ];
 
-#    my ($username, $domain) = split '@', $user;
+    my $ldap = $self->ldap;
 
     my $dc = $self->_getDc($self->domain);
 
@@ -286,6 +350,13 @@ sub getUsers {
     my @users = $mesg->entries;
     return \@users;
 }
+
+=head3 showUsers($username)
+
+Print users (filter for $username if set) in Unix passwd format or as
+Net::LDAP dump if verbose is set.
+
+=cut
 
 sub showUsers {
     my $self     = shift;
@@ -322,6 +393,13 @@ sub showUsers {
     }
 }
 
+=head3 getGroupMembers($groupname)
+
+Return array ref of members of $groupname. Groups inside the group are
+not resolved at this point.
+
+=cut
+
 sub getGroupMembers {
     my $self      = shift;
     my $groupname = shift;
@@ -356,6 +434,12 @@ sub getGroupMembers {
     return \@users;
 }
 
+=head2 updateUser($username, $parameters)
+
+Update existing $username with given $parameters (hash ref).
+
+=cut
+
 sub updateUser {
     my $self     = shift;
     my $username = shift;
@@ -385,6 +469,12 @@ sub updateUser {
     }
 }
 
+=head3 addToGroup($username, $groupname)
+
+Add $username as member to $groupname.
+
+=cut
+
 sub addToGroup {
     my $self      = shift;
     my $username  = shift;
@@ -407,6 +497,12 @@ sub addToGroup {
     );
     die $mesg->error if $mesg->code;
 }
+
+=head2 createUser($username, $parameters)
+
+Create new $username with given $parameters (hash ref).
+
+=cut
 
 sub createUser {
     my $self     = shift;
@@ -467,6 +563,13 @@ sub createUser {
     return $result;
 }
 
+=head3 deleteUser($username)
+
+Delete $username. NOTE: the users home directory is not deleted on the
+Windows server.
+
+=cut
+
 sub deleteUser {
     my $self     = shift;
     my $username = shift;
@@ -480,6 +583,17 @@ sub deleteUser {
     my $result = $ldap->delete($adUser);
     $result->code && warn "Could not modify entry: " . ldap_error_name($result);
 }
+
+=head3 syncPasswd($passwdFile, $userPasswFile, $minUid, $maxUid, $delete, $addToGroup)
+
+Create/update users for each user in $passwdFile (Unix /etc/passwd format).
+Users with uid<$minUid and uid>$maxUid or with login shell /bin/false are ignored.
+
+If $delete flag is true the users are first deleted and then newly created.
+
+Users are added to AD group $addToGroup if set.
+
+=cut
 
 sub syncPasswd {
     my $self           = shift;
@@ -552,6 +666,12 @@ sub syncPasswd {
     say "$creates accounts created, $updates ${updateAction}d, $skips skipped.";
 }
 
+=head3 unbind
+
+Close net::LDAPS connection.
+
+=cut
+
 sub unbind {
     my $self = shift;
 
@@ -559,7 +679,9 @@ sub unbind {
     die $mesg->error if $mesg->code;
 }
 
-### helper methods
+=head2 Private METHODS
+
+=cut
 
 sub _getDc {
     my $self   = shift;
@@ -650,37 +772,38 @@ sub _makePassword {
 
 1;
 
-### various docs
-#
-# http://www.barncrew.com/changing-an-active-directory-password-from-perl/
-# http://ldapwiki.willeke.com/wiki/Perl%20Add%20User%20Sample
-# http://stackoverflow.com/questions/20846597/using-perl-to-get-users-of-ad-group
-# http://www.developer.com/open/article.php/10930_3106601_3/Searching-Active-Directory-with-Perl.htm
-# http://grokbase.com/t/perl/ldap/069wqmq9m0/adding-groups-to-a-user-account
-# http://blogthing.eskibars.com/project/populating-users-in-active-directory-using-perl-with-ole/
-# https://blog.varonis.com/how-to-find-active-directory-group-member/
-# https://blog.varonis.com/how-to-find-active-directory-group-member/
-# http://www.vinidox.com/ldap/querying-an-ldap-server-from-the-command-line-with-ldap-utils-ldapsearch-ldapadd-ldapmodify
-# http://www.itadmintools.com/2010/09/accessing-active-directory-using-perl.html
-# http://www.itadmintools.com/2010/09/accessing-active-directory-using-perl.html
-
-
-
 __END__
 
-=head1 NAME
 
-aduser.pl - Active Directory user manager
 
-=head1 SYNOPSIS
+=head1 SEE ALSO
 
-B<aduser.pl help> for usage instructions
+Various more or less useful info pages:
 
-=head1 DESCRIPTION
+=over 1
 
-Create, delete, update Active Directory user accounts.
+=item L<http://www.barncrew.com/changing-an-active-directory-password-from-perl/>
 
-Sync with Unix /etc/passwd file
+
+=item L<http://ldapwiki.willeke.com/wiki/Perl%20Add%20User%20Sample>
+
+=item L<http://stackoverflow.com/questions/20846597/using-perl-to-get-users-of-ad-group>
+
+=item L<http://www.developer.com/open/article.php/10930_3106601_3/Searching-Active-Directory-with-Perl.htm>
+
+=item L<http://grokbase.com/t/perl/ldap/069wqmq9m0/adding-groups-to-a-user-account>
+
+=item L<http://blogthing.eskibars.com/project/populating-users-in-active-directory-using-perl-with-ole/>
+
+=item L<https://blog.varonis.com/how-to-find-active-directory-group-member/>
+
+=item L<https://blog.varonis.com/how-to-find-active-directory-group-member/>
+
+=item L<http://www.vinidox.com/ldap/querying-an-ldap-server-from-the-command-line-with-ldap-utils-ldapsearch-ldapadd-ldapmodify>
+
+=item L<http://www.itadmintools.com/2010/09/accessing-active-directory-using-perl.html>
+
+=item L<http://www.itadmintools.com/2010/09/accessing-active-directory-using-perl.html>
 
 
 =head1 COPYRIGHT
@@ -709,7 +832,7 @@ S<Fritz Zaucker E<lt>fritz.zaucker@oetiker.chE<gt>>
 
 =head1 HISTORY
 
- 2016-07-21 za 1.0 first version
+ 2016-08-04 za 1.0.0 first published version
 
 =cut
 
