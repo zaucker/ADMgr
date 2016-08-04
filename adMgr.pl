@@ -11,6 +11,7 @@ use lib "$ENV{HOME}/lib/perl-5.18.2";
 use English qw( -no_match_vars );
 use Getopt::Long;
 use JSON;
+use Term::ReadKey;
 
 =head1 NAME
 
@@ -81,19 +82,19 @@ sub main {
         "delete"       => \$delete,
         "verbose"      => \$verbose,
         "addToGroup=s" => \$addToGroup,
-    ) or die("Error in command line arguments\n");
+    ) or die "Error in command line arguments";
 
     my $action = $ARGV[0] // 'help';
     my $name   = $ARGV[1] // '';
 
     usage if $action eq 'help';
     if (not $name and not $action =~ /showUser|syncPasswd/) {
-        die "$action needs a user- or groupname";
+        die "$action needs a user- or group- or password filename";
     }
 
     my $defaultsFile = "$ENV{HOME}/.adMgrrc";
     if (-r $defaultsFile) {
-        open my $fh, '<', $defaultsFile or die "Couldn't open $defaultsFile";
+        open my $fh, '<', $defaultsFile or die "Couldn't open $defaultsFile: $@";
         local $/ = undef;
         my $data = <$fh>;
         close $fh;
@@ -110,7 +111,16 @@ sub main {
     $userPasswdFile = $userPasswdFile // $defaults->{userPasswd};
     $addToGroup     = $addToGroup     // $defaults->{addToGroup};
 
-    usage unless $adServer and $adUser and $adPassword and $adDomain;
+    usage unless $adServer and $adUser and $adDomain;
+
+    if (not defined $adPassword) {
+        ReadMode('noecho');
+        print "Enter password for $adUser: ";
+        $adPassword = ReadLine(0);
+        ReadMode('normal');
+        chomp $adPassword;
+        say '';
+    }
 
     my $ad = AdMgr->new(
         $adServer,
