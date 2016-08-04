@@ -5,6 +5,8 @@ Usage:
 ```
 ./adMgr.pl: --adServer=hostname[:port] --adUser=adminUser --adPassword=password --adDomain=adDomain [params] action name
 
+adPassword will be prompted for if not given on commandline or defaults file.
+
 action: help|createUser|deleteUser|showUser|updateUser|showGroup|syncPasswd
 params: for actions createUser (mandatory) and updateUser (optional)
           --firstname
@@ -27,4 +29,12 @@ params: for actions createUser (mandatory) and updateUser (optional)
 
          name:   username or groupname or passwdFilename (assumed to be in UTF-8)
 
+Defaults can be stored in $HOME/.adMgrrc for:
+    --adServer
+    --adDomain
+    --adUser
+    --adPassword
+    --shell
+    --userPasswd
+    --addToGroup
 ```

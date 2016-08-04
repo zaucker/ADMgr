@@ -205,12 +205,15 @@ Show usage message.
 
 sub usage {
     die << "USAGE";
-  Usage: $PROGRAM_NAME: --adServer=hostname[:port] --adUser=adminUser --adPassword=password --adDomain=adDomain [params] action name
+  Usage: $PROGRAM_NAME: --adServer=hostname[:port] --adUser=adminUser [--adPassword=password] --adDomain=adDomain [params] action name
+
+         adPassword will be prompted for if not given on commandline or defaults file.
+
          action: help|createUser|deleteUser|showUser|updateUser|showGroup|syncPasswd
          params: for actions createUser (mandatory) and updateUser (optional)
                    --firstname
                    --lastname
-                   --password   (optional for createUser)
+                   --password (optional for createUser)
                    --shell      Login shell
                    --home       Unix home directory
                    --uid        Unix user id
@@ -229,9 +232,11 @@ sub usage {
 
          name:   username or groupname or passwdFilename (assumed to be in UTF-8)
 
-         Defaults: --adServer=$defaults->{adServer}
+         Defaults (from $HOME/.adMgrrc):
+                   --adServer=$defaults->{adServer}
                    --adDomain=$defaults->{adDomain}
                    --adUser=$defaults->{adUser}
+                   --adPassword=$defaults->{adPassword}
                    --shell=$defaults->{shell}
                    --userPasswd=$defaults->{userPasswd}
                    --addToGroup=$defaults->{addToGroup}
