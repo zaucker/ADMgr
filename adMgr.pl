@@ -271,7 +271,7 @@ sub new {
                     debug  => 0,
                     # specific options
                     @ldapOptions,
-               ) or die "Couldn't connect to $server";
+               ) or die "Couldn't connect to $server: $@";
 
     my $self = bless {
         ldap    => $ldap,
@@ -281,7 +281,8 @@ sub new {
 
     my $dc = $self->_getDc($domain);
     my $mesg = $ldap->bind(
-        "cn=$adUser,cn=users,$dc",
+#        "cn=$adUser,cn=users,$dc",
+        $adUser,
         password => $adPassword
     );
     die "ERROR: " . $mesg->error if $mesg->code;
@@ -465,7 +466,7 @@ sub updateUser {
     if (scalar keys %adParams) {
         my $adUser = $self->getUsers($username)->[0];
         my $result = $ldap->modify($adUser, replace => \%adParams);
-        $result->code && warn "Could not modify entry: " . ldap_error_name($result);
+        $result->code && die "Could not modify entry: " . ldap_error_name($result);
     }
 }
 
