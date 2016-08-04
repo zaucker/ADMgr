@@ -271,7 +271,7 @@ sub new {
                     debug  => 0,
                     # specific options
                     @ldapOptions,
-               );
+               ) or die "Couldn't connect to $server";
 
     my $self = bless {
         ldap    => $ldap,
@@ -369,16 +369,16 @@ sub showUsers {
                 $u->dump;
             }
             else {
-                my ($lastname, $firstname) = split / /, $u->get_value('displayName');
+                my ($lastname, $firstname) = split / /, ($u->get_value('displayName') // '');
                 my $fullname = "$firstname $lastname";
                 say join ':', (
-                        $u->get_value('sAMAccountName'),
+                        $u->get_value('sAMAccountName')    // '',
                         'x',
-                        $u->get_value('uidNumber'),
-                        $u->get_value('gidNumber'),
-                        $fullname,
-                        $u->get_value('unixHomeDirectory'),
-                        $u->get_value('loginShell'),
+                        $u->get_value('uidNumber')         // '',
+                        $u->get_value('gidNumber')         // '',
+                        $fullname                          // '',
+                        $u->get_value('unixHomeDirectory') // '',
+                        $u->get_value('loginShell')        // '',
                     );
             }
         }
